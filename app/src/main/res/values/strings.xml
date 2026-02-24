@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Store App</string>
+    <string name="title_home">Home</string>
+    <string name="title_deals">Deals</string>
+    <string name="title_products">Products</string>
+    <string name="title_account">Account</string>
+    <string name="login_with_google">Login with Google</string>
+    <string name="logout">Logout</string>
+    <string name="welcome_message">Welcome to Store App</string>
+    <string name="no_items">No items found</string>
+    <string name="loading">Loading...</string>
+    <string name="error_occurred">An error occurred</string>
+    <string name="retry">Retry</string>
+    <string name="add_to_cart">Add to Cart</string>
+    <string name="view_details">View Details</string>
+    <string name="close">Close</string>
+    <string name="notification_channel_name">Deal Notifications</string>
+    <string name="notification_channel_description">Notifications about upcoming deals and offers</string>
+    <string name="notification_title">New Deal Available!</string>
+    <string name="notification_text">Check out our latest deals</string>
+    <string name="menu_home">Home</string>
+    <string name="menu_deals">Deals</string>
+    <string name="menu_products">Products</string>
+    <string name="menu_account">Account</string>
+    <string name="menu_logout">Logout</string>
+    <string name="price_format">$%1$.2f</string>
+    <string name="discount_format">%1$d%% OFF</string>
+    <string name="product_details">Product Details</string>
+    <string name="deal_details">Deal Details</string>
+    <string name="description">Description</string>
+    <string name="add_item">Add Item</string>
+    <string name="item_added">Item added to cart</string>
+    <string name="google_sign_in_failed">Google Sign-In failed</string>
+    <string name="sign_out">Sign Out</string>
+    <string name="signed_in_as">Signed in as %1$s</string>
+</resources>
