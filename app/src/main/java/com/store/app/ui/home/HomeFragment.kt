@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.store.app.R
@@ -52,18 +53,26 @@ class HomeFragment : Fragment() {
             showDealDetailDialog(deal)
         }
 
+        // Products - Grid Layout (2 columns)
         binding.recyclerViewProducts.apply {
-            layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
+            layoutManager = GridLayoutManager(context, 2)
             adapter = productAdapter
+            isNestedScrollingEnabled = false
         }
 
+        // Deals - Horizontal Layout
         binding.recyclerViewDeals.apply {
-            layoutManager = LinearLayoutManager(context)
+            layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
             adapter = dealAdapter
         }
     }
 
     private fun setupSwipeRefresh() {
+        binding.swipeRefreshLayout.setColorSchemeResources(
+            R.color.primary,
+            R.color.accent,
+            R.color.error
+        )
         binding.swipeRefreshLayout.setOnRefreshListener {
             viewModel.refreshData()
         }
@@ -91,14 +100,14 @@ class HomeFragment : Fragment() {
     }
 
     private fun showProductDetailDialog(product: ProductEntity) {
-        val dialog = BottomSheetDialog(requireContext())
+        val dialog = BottomSheetDialog(requireContext(), R.style.DialogStyle)
         val dialogBinding = DialogProductDetailBinding.inflate(layoutInflater)
         
         dialogBinding.productName.text = product.name
         dialogBinding.productDescription.text = product.description
         dialogBinding.productPrice.text = String.format("$%.2f", product.price)
         dialogBinding.productCategory.text = product.category
-        dialogBinding.productRating.text = String.format("%.1f", product.rating)
+        dialogBinding.productRating.text = String.format("%.1f ⭐", product.rating)
         
         dialogBinding.btnAddToCart.setOnClickListener {
             Toast.makeText(context, R.string.item_added, Toast.LENGTH_SHORT).show()
@@ -114,7 +123,7 @@ class HomeFragment : Fragment() {
     }
 
     private fun showDealDetailDialog(deal: DealEntity) {
-        val dialog = BottomSheetDialog(requireContext())
+        val dialog = BottomSheetDialog(requireContext(), R.style.DialogStyle)
         val dialogBinding = DialogDealDetailBinding.inflate(layoutInflater)
         
         dialogBinding.dealTitle.text = deal.title

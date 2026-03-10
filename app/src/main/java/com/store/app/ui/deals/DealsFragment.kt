@@ -7,7 +7,7 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.GridLayoutManager
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.store.app.R
 import com.store.app.data.local.entity.DealEntity
@@ -43,14 +43,20 @@ class DealsFragment : Fragment() {
         dealAdapter = DealAdapter { deal ->
             showDealDetailDialog(deal)
         }
-
+        
         binding.recyclerViewDeals.apply {
-            layoutManager = LinearLayoutManager(context)
+            // Grid Layout (2 columns)
+            layoutManager = GridLayoutManager(context, 2)
             adapter = dealAdapter
         }
     }
 
     private fun setupSwipeRefresh() {
+        binding.swipeRefreshLayout.setColorSchemeResources(
+            R.color.primary,
+            R.color.accent,
+            R.color.error
+        )
         binding.swipeRefreshLayout.setOnRefreshListener {
             viewModel.refreshDeals()
         }
@@ -59,17 +65,13 @@ class DealsFragment : Fragment() {
     private fun observeViewModel() {
         viewModel.deals.observe(viewLifecycleOwner) { deals ->
             dealAdapter.submitList(deals)
-            if (deals.isEmpty()) {
-                binding.emptyView.visibility = View.VISIBLE
-                binding.recyclerViewDeals.visibility = View.GONE
-            } else {
-                binding.emptyView.visibility = View.GONE
-                binding.recyclerViewDeals.visibility = View.VISIBLE
-            }
+            binding.emptyView.visibility = if (deals.isEmpty()) View.VISIBLE else View.GONE
+            binding.recyclerViewDeals.visibility = if (deals.isEmpty()) View.GONE else View.VISIBLE
         }
 
         viewModel.isLoading.observe(viewLifecycleOwner) { isLoading ->
             binding.swipeRefreshLayout.isRefreshing = isLoading
+            binding.progressBar.visibility = if (isLoading && dealAdapter.itemCount == 0) View.VISIBLE else View.GONE
         }
 
         viewModel.error.observe(viewLifecycleOwner) { error ->
@@ -81,7 +83,7 @@ class DealsFragment : Fragment() {
     }
 
     private fun showDealDetailDialog(deal: DealEntity) {
-        val dialog = BottomSheetDialog(requireContext())
+        val dialog = BottomSheetDialog(requireContext(), R.style.DialogStyle)
         val dialogBinding = DialogDealDetailBinding.inflate(layoutInflater)
         
         dialogBinding.dealTitle.text = deal.title

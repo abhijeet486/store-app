@@ -4,20 +4,18 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.store.app.StoreApplication
 import com.store.app.data.local.entity.ProductEntity
+import com.store.app.data.repository.ProductRepository
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 class ProductsViewModel : ViewModel() {
 
-    private val productRepository = StoreApplication.getInstance().productRepository
+    private val repository = ProductRepository()
 
     private val _products = MutableLiveData<List<ProductEntity>>()
     val products: LiveData<List<ProductEntity>> = _products
-
-    private val _selectedProduct = MutableLiveData<ProductEntity?>()
-    val selectedProduct: LiveData<ProductEntity?> = _selectedProduct
 
     private val _isLoading = MutableLiveData<Boolean>()
     val isLoading: LiveData<Boolean> = _isLoading
@@ -25,67 +23,38 @@ class ProductsViewModel : ViewModel() {
     private val _error = MutableLiveData<String?>()
     val error: LiveData<String?> = _error
 
-    private val _categories = MutableLiveData<List<String>>()
-    val categories: LiveData<List<String>> = _categories
-
-    private var currentCategory: String? = null
+    private var currentCategory = "All"
 
     init {
         loadProducts()
-        loadCategories()
     }
 
-    fun loadProducts() {
+    private fun loadProducts() {
         viewModelScope.launch {
             _isLoading.value = true
-            try {
-                productRepository.refreshProducts()
-                productRepository.getAllProducts().collectLatest { productList ->
-                    _products.value = productList
+            repository.getAllProducts()
+                .catch { e ->
+                    _error.value = e.message
                     _isLoading.value = false
                 }
-            } catch (e: Exception) {
-                _error.value = e.message
-                _isLoading.value = false
-            }
-        }
-    }
-
-    fun loadCategories() {
-        viewModelScope.launch {
-            productRepository.getAllCategories().collectLatest { categoryList ->
-                _categories.value = categoryList
-            }
-        }
-    }
-
-    fun filterByCategory(category: String?) {
-        currentCategory = category
-        viewModelScope.launch {
-            _isLoading.value = true
-            if (category == null) {
-                productRepository.getAllProducts().collectLatest { productList ->
-                    _products.value = productList
+                .collectLatest { productList ->
+                    val filtered = if (currentCategory == "All") {
+                        productList
+                    } else {
+                        productList.filter { it.category == currentCategory }
+                    }
+                    _products.value = filtered
                     _isLoading.value = false
                 }
-            } else {
-                productRepository.getProductsByCategory(category).collectLatest { productList ->
-                    _products.value = productList
-                    _isLoading.value = false
-                }
-            }
         }
-    }
-
-    fun selectProduct(product: ProductEntity) {
-        _selectedProduct.value = product
-    }
-
-    fun clearSelectedProduct() {
-        _selectedProduct.value = null
     }
 
     fun refreshProducts() {
+        loadProducts()
+    }
+
+    fun filterByCategory(category: String) {
+        currentCategory = category
         loadProducts()
     }
 
