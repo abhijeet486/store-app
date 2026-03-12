@@ -52,6 +52,23 @@ class AuthViewModel : ViewModel() {
         }
     }
 
+    fun loginAsGuest() {
+        viewModelScope.launch {
+            _isLoading.value = true
+            val result = userRepository.loginAsGuest()
+            _isLoading.value = false
+
+            result.fold(
+                onSuccess = { user ->
+                    _userState.value = UserState.LoggedIn(user)
+                },
+                onFailure = { error ->
+                    _userState.value = UserState.Error(error.message ?: "Guest login failed")
+                }
+            )
+        }
+    }
+
     fun logout() {
         viewModelScope.launch {
             userRepository.logout()

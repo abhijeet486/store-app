@@ -34,4 +34,7 @@
     <string name="google_sign_in_failed">Google Sign-In failed</string>
     <string name="sign_out">Sign Out</string>
     <string name="signed_in_as">Signed in as %1$s</string>
+
+    <!-- TODO: Replace with your actual Web Client ID from Google Cloud Console -->
+    <string name="default_web_client_id">YOUR_WEB_CLIENT_ID_HERE</string>
 </resources>

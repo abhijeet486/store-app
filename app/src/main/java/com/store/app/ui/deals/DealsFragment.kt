@@ -45,7 +45,6 @@ class DealsFragment : Fragment() {
         }
         
         binding.recyclerViewDeals.apply {
-            // Grid Layout (2 columns)
             layoutManager = GridLayoutManager(context, 2)
             adapter = dealAdapter
         }
@@ -90,7 +89,7 @@ class DealsFragment : Fragment() {
         dialogBinding.dealDescription.text = deal.description
         dialogBinding.originalPrice.text = String.format("$%.2f", deal.originalPrice)
         dialogBinding.discountedPrice.text = String.format("$%.2f", deal.discountedPrice)
-        dialogBinding.discountPercentage.text = String.format("%d%% OFF", deal.discountPercentage)
+        dialogBinding.discountBadge.text = String.format("%d%% OFF", deal.discountPercentage)
         
         dialogBinding.btnAddToCart.setOnClickListener {
             Toast.makeText(context, R.string.item_added, Toast.LENGTH_SHORT).show()

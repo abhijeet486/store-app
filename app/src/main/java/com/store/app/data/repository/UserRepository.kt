@@ -22,11 +22,28 @@ class UserRepository(
             if (result.isSuccess) {
                 val userModel = result.getOrNull()!!
                 val userEntity = userModel.toEntity(isLoggedIn = true)
+                // Register/Update user in local database
                 userDao.insertUser(userEntity)
                 Result.success(userEntity)
             } else {
                 Result.failure(Exception("Login failed"))
             }
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
+    suspend fun loginAsGuest(): Result<UserEntity> {
+        return try {
+            val guestUser = UserEntity(
+                id = "guest_${System.currentTimeMillis()}",
+                email = "guest@example.com",
+                displayName = "Guest User",
+                photoUrl = null,
+                isLoggedIn = true
+            )
+            userDao.insertUser(guestUser)
+            Result.success(guestUser)
         } catch (e: Exception) {
             Result.failure(e)
         }

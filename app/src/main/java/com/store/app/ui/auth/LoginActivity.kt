@@ -48,6 +48,10 @@ class LoginActivity : AppCompatActivity() {
         binding.btnGoogleSignIn.setOnClickListener {
             signIn()
         }
+        
+        binding.btnGuestSignIn.setOnClickListener {
+            viewModel.loginAsGuest()
+        }
     }
 
     private fun observeViewModel() {
@@ -65,6 +69,7 @@ class LoginActivity : AppCompatActivity() {
 
         viewModel.isLoading.observe(this) { isLoading ->
             binding.btnGoogleSignIn.isEnabled = !isLoading
+            binding.btnGuestSignIn.isEnabled = !isLoading
             if (isLoading) {
                 binding.progressBar.visibility = android.view.View.VISIBLE
             } else {

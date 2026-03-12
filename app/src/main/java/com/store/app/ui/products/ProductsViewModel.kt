@@ -4,15 +4,15 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.store.app.StoreApplication
 import com.store.app.data.local.entity.ProductEntity
-import com.store.app.data.repository.ProductRepository
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 class ProductsViewModel : ViewModel() {
 
-    private val repository = ProductRepository()
+    private val repository = StoreApplication.getInstance().productRepository
 
     private val _products = MutableLiveData<List<ProductEntity>>()
     val products: LiveData<List<ProductEntity>> = _products
@@ -50,7 +50,16 @@ class ProductsViewModel : ViewModel() {
     }
 
     fun refreshProducts() {
-        loadProducts()
+        viewModelScope.launch {
+            _isLoading.value = true
+            try {
+                repository.refreshProducts()
+                loadProducts()
+            } catch (e: Exception) {
+                _error.value = e.message
+                _isLoading.value = false
+            }
+        }
     }
 
     fun filterByCategory(category: String) {
